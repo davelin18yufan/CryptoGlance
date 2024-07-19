@@ -1,20 +1,38 @@
-import { WalletOptions } from "./components/WagmiOption"
-import { Button, useColorMode } from "@chakra-ui/react"
-import "./App.css"
+import {
+  Button,
+  useColorMode,
+  Box,
+  Heading,
+  VStack,
+  Flex,
+  Divider,
+  Spacer,
+  ButtonGroup
+} from "@chakra-ui/react"
+import { MoonIcon, SunIcon } from "@chakra-ui/icons"
+import WalletConnectButton from "./components/WalletBtn"
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode()
 
   return (
-    <>
-      <h1>Crypto Glance</h1>
-      <Button size="sm" onClick={toggleColorMode}>
-        Toggle Mode
-      </Button>
-      <div className="card">
-        <WalletOptions />
-      </div>
-    </>
+    <Box textAlign="center" fontSize="xl" p={3} width="100%">
+      <VStack spacing={5}>
+        <Heading textAlign="center">Crypto Glance</Heading>
+        <Flex minWidth="max-content" alignItems="center" gap="2" align='center'>
+          <Button onClick={toggleColorMode} marginRight={2}>
+            {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+          </Button>
+          <Spacer />
+          <ButtonGroup gap="2" alignItems='center'>
+            <w3m-network-button />
+            <WalletConnectButton />
+          </ButtonGroup>
+        </Flex>
+        <Divider />
+        {/* <BalanceDisplay /> */}
+      </VStack>
+    </Box>
   )
 }
 
