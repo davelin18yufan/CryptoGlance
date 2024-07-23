@@ -67,17 +67,6 @@ This project is a Web3 asset management platform that allows users to connect th
 3. Use the transfer functionality to send assets to other addresses.
 4. Monitor your transactions through real-time notifications.
 
-## Testing
-
-To run the test suite:
-
-```
-pnpm test
-```
-or
-```
-yarn test
-```
 
 ## Deployment
 
