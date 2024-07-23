@@ -1,5 +1,3 @@
-import { useAccount, useBalance, useReadContracts } from "wagmi"
-import { erc20Abi } from "viem"
 import {
   Heading,
   Box,
@@ -12,20 +10,15 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  useDisclosure,
 } from "@chakra-ui/react"
-import { useQuery } from "@tanstack/react-query"
-import { ERC20_TOKENS } from "../constants"
 import { ChevronRightIcon } from "@chakra-ui/icons"
 import Chart from "./Chart"
-import { dummyBalances as tokenBalances } from "../constants"
 import { useState } from "react"
+import Transaction from "./Transaction"
+import { formatNumber } from "../utils"
+import { useBalanceStore } from "../stores"
 
-const fetchTokenPrices = async () => {
-  const response = await fetch(
-    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,usd-coin&vs_currencies=usd"
-  )
-  return response.json()
-}
 
 export const AssetCard = ({
   symbol,
@@ -42,11 +35,12 @@ export const AssetCard = ({
   usdValue: number
   percentage: number
 }) => {
-  if (!balance && symbol !== "ETH") return null
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const bg = useColorModeValue("gray.50", "gray.700")
   const border = useColorModeValue("1px", "2px")
   return (
     <Box
+      onClick={onOpen}
       w="100%"
       h={32}
       p={4}
@@ -74,7 +68,7 @@ export const AssetCard = ({
           </Text>
           <Text fontSize="sm">{address}</Text>
           <Text fontSize="sm">
-            ${usdValue.toFixed(2)} USD ({percentage.toFixed(2)}%)
+            ${formatNumber(usdValue)} USD ({percentage.toFixed(2)}%)
           </Text>
         </VStack>
         <ChevronRightIcon
@@ -91,6 +85,7 @@ export const AssetCard = ({
           }}
         />
       </HStack>
+      <Transaction isOpen={isOpen} onClose={onClose} />
     </Box>
   )
 }
@@ -99,56 +94,14 @@ const Asset = () => {
   const [labelType, setLabelType] = useState<"value" | "percentage" | "symbol">(
     "percentage"
   )
+  const { assets, ethBalance } = useBalanceStore()
+
   const border = useColorModeValue("1px", "2px")
-  const { address, isConnected } = useAccount()
-  if (!isConnected) return null
-
-  const { data: ethBalance } = useBalance({
-    address,
-  })
-  const { data: prices, error } = useQuery({
-    queryKey: ["tokenPrices"],
-    queryFn: fetchTokenPrices,
-  })
-  if (error) throw new Error(`fetch coingecko token price error: ${error}`)
-
-  // Get erc20 contracts value
-  const contracts = ERC20_TOKENS.map((token) => ({
-    address: token.address as `0x${string}`,
-    abi: erc20Abi,
-    functionName: "balanceOf",
-    args: [address],
-  }))
-
-  // *Using imported dummyData instead of real
-  // const { data: tokenBalances } = useReadContracts({
-  //   contracts,
-  // })
-
-  // contracts and assets have exact same index
-  const assets = ERC20_TOKENS.map((token, index) => {
-    const balance = tokenBalances?.[index]?.result || 0
-    const usdValue = parseFloat(balance.toString()) * prices?.ethereum?.usd || 0
-
-    return {
-      symbol: token.symbol,
-      icon: token.icon,
-      address: token.address,
-      balance: parseFloat(balance.toString()),
-      usdValue,
-      percentage: usdValue
-        ? (parseFloat(balance.toString()) /
-            parseFloat(ethBalance?.formatted!)) *
-          100
-        : 0,
-    }
-  })
+  if (!assets) return null
 
   return (
     <Box>
-      <Heading size="md">
-        Total Balance: {ethBalance?.symbol} {ethBalance?.formatted}
-      </Heading>
+      <Heading size="md">Total Balance: ETH {ethBalance}</Heading>
       <Flex
         mt={5}
         gap={5}
@@ -157,9 +110,9 @@ const Asset = () => {
         w="90vw"
       >
         <VStack w="60%" alignItems="stretch" spacing={3} flexShrink={0}>
-          {assets.map((asset, index) => (
-            <AssetCard key={index} {...asset} />
-          ))}
+          {assets.map((asset, index) =>
+            asset.balance ? <AssetCard key={index} {...asset} /> : null
+          )}
         </VStack>
         <Box
           w="50%"

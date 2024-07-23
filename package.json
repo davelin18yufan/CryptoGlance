@@ -21,7 +21,8 @@
     "react-hot-toast": "^2.4.1",
     "recharts": "^2.12.7",
     "viem": "^2.17.5",
-    "wagmi": "^2.11.2"
+    "wagmi": "^2.11.2",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
