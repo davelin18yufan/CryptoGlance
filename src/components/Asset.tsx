@@ -65,7 +65,7 @@ const AssetCard = ({
         />
         <VStack align="start" spacing={1} flex={1}>
           <Text fontWeight="bold">
-            {symbol} {balance}
+            {symbol} {formatNumber(balance)}
           </Text>
           <Text fontSize="sm">{address}</Text>
           <Text fontSize="sm">

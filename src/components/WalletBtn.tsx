@@ -8,8 +8,9 @@ import { ERC20_TOKENS } from "../constants"
 import { useBalanceStore } from "../stores"
 
 const fetchTokenPrices = async () => {
+  const ids = ERC20_TOKENS.map(token => token.name).join(',');
   const response = await fetch(
-    "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,usd-coin&vs_currencies=usd"
+    `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`
   )
   return response.json()
 }
@@ -48,7 +49,7 @@ export const WalletConnectButton = () => {
       const assets = ERC20_TOKENS.map((token, index) => {
         const balance = tokenBalances?.[index]?.result || 0
         const usdValue =
-          parseFloat(balance.toString()) * prices?.ethereum?.usd || 0
+          parseFloat(balance.toString()) * prices?.[token.name]?.usd || 0
 
         return {
           symbol: token.symbol,
