@@ -15,7 +15,7 @@ import {
   useToast,
   CircularProgress,
 } from "@chakra-ui/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   useAccount,
   useBalance,
@@ -24,6 +24,7 @@ import {
   type BaseError,
 } from "wagmi"
 import { parseEther } from "viem"
+import { useBalanceStore } from "../stores"
 
 interface FormValues {
   address: `0x${string}`
@@ -45,8 +46,13 @@ const Transaction = ({
   const toast = useToast()
   const { address } = useAccount()
   const { data: balance } = useBalance({ address })
+  const {ethBalance, assets, updateEthBalance} = useBalanceStore()
 
-  const { data: hash, isPending, sendTransaction } = useSendTransaction()
+  const {
+    data: hash,
+    isPending,
+    sendTransaction,
+  } = useSendTransaction()
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -87,6 +93,21 @@ const Transaction = ({
   } = useWaitForTransactionReceipt({
     hash,
   })
+
+  useEffect(() => {
+    if(isConfirmed){
+      // TODO:Unfinished Part
+      const gasUsed = receipt.gasUsed
+      const gasPrice = receipt.effectiveGasPrice
+
+      // transaction fee in wei
+      const txFee = gasUsed * gasPrice
+
+      updateEthBalance(ethBalance - Number(txFee))
+      // TODO: Get real value
+      // updateAssets('ETH', )
+    }
+  }, [ethBalance, assets])
 
   return (
     <>

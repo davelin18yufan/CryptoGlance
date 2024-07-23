@@ -12,7 +12,7 @@ This project is a Web3 asset management platform that allows users to connect th
 ### 2. Asset Overview
 - Display ERC20 token and ETH (gas) balances
 - Real-time updates of asset USD values (using Coingecko API)
-  - Supported assets: BTC, ETH(WETH), USDC
+  - Supported assets: ERC20 tokens.
 - Asset fields include: symbol, icon, address, USD value, and percentage
 - Pie chart visualization of asset USD value distribution
 
