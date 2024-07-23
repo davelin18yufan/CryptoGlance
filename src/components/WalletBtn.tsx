@@ -30,21 +30,20 @@ export const WalletConnectButton = () => {
   if (error) throw new Error(`fetch coingecko token price error: ${error}`)
 
   const { updateEthBalance, updateAssets } = useBalanceStore()
+  // Get erc20 contracts value
+  const contracts = ERC20_TOKENS.map((token) => ({
+    address: token.address as `0x${string}`,
+    abi: erc20Abi,
+    functionName: "balanceOf",
+    args: [address],
+  }))
+  const { data: tokenBalances } = useReadContracts({
+    contracts,
+  })
 
   useEffect(() => {
     if (isConnected && address && !isFetching) {
       updateEthBalance(Number(ethBalance?.value))
-
-      // Get erc20 contracts value
-      const contracts = ERC20_TOKENS.map((token) => ({
-        address: token.address as `0x${string}`,
-        abi: erc20Abi,
-        functionName: "balanceOf",
-        args: [address],
-      }))
-      const { data: tokenBalances } = useReadContracts({
-        contracts,
-      })
 
       const assets = ERC20_TOKENS.map((token, index) => {
         const balance = tokenBalances?.[index]?.result || 0
