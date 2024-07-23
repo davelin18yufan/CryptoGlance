@@ -2,6 +2,8 @@
 
 This project is a Web3 asset management platform that allows users to connect their wallets, view their asset balances, and perform transactions. It's built using TypeScript, React, wagmi, viem, and Chakra UI.
 
+## All task description is in note.md
+
 ## Features
 
 ### 1. Wallet Connection
