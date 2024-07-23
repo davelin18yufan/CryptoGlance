@@ -1,30 +1,93 @@
-# React + TypeScript + Vite
+# Crypto Glance
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is a Web3 asset management platform that allows users to connect their wallets, view their asset balances, and perform transactions. It's built using TypeScript, React, wagmi, viem, and Chakra UI.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 1. Wallet Connection
+- Connect to various wallets (e.g., MetaMask)
+- Display connected wallet address and ETH balance
+- Network switching functionality (Ethereum Mainnet, Ethereum Testnet Sepolia)
 
-## Expanding the ESLint configuration
+### 2. Asset Overview
+- Display ERC20 token and ETH (gas) balances
+- Real-time updates of asset USD values (using Coingecko API)
+  - Supported assets: BTC, ETH(WETH), USDC
+- Asset fields include: symbol, icon, address, USD value, and percentage
+- Pie chart visualization of asset USD value distribution
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 3. Transaction Integration
+- Transfer assets functionality
+- Input fields for recipient address and amount
 
-- Configure the top-level `parserOptions` property like this:
+### 4. Transaction Monitoring
+- Real-time detection of transaction status changes
+- Toast notifications for asset status changes
+- Loading status indicators
+- Optional: Display of transaction type, currency, and amount in notifications
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.app.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+## Getting Started
+
+### Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/davelin18yufan/CryptoGlance.git
+   ```
+
+2. Navigate to the project directory:
+   ```
+   cd CryptoGlance
+   ```
+
+3. Install dependencies:
+   ```
+   pnpm install
+   ```
+   or
+   ```
+   yarn install
+   ```
+
+4. Start the development server:
+   ```
+   pnpm run dev
+   ```
+   or
+   ```
+   yarn run dev
+   ```
+
+## Usage
+
+1. Connect your wallet using the "Connect Wallet" button.
+2. View your asset balances and their USD values.
+3. Use the transfer functionality to send assets to other addresses.
+4. Monitor your transactions through real-time notifications.
+
+## Testing
+
+To run the test suite:
+
+```
+pnpm test
+```
+or
+```
+yarn test
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Deployment
+
+https://cryptoglance-davelin18yufans-projects.vercel.app/
+
+## Built With
+
+- [React](https://reactjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [wagmi](https://wagmi.sh/)
+- [viem](https://viem.sh/)
+- [Chakra UI](https://chakra-ui.com/)
+- [Web3Modal](https://web3modal.com/)
+- [Tanstack Query](https://react-query.tanstack.com/)
+

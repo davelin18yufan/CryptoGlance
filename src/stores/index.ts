@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-type Asset = {
+export type Asset = {
   symbol: string
   icon: string
   address: string

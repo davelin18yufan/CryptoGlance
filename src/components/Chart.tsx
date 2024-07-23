@@ -1,6 +1,6 @@
 import { PieChart, Pie, Legend, Cell, ResponsiveContainer } from "recharts"
 import { formatNumber } from "../utils"
-import { useColorMode } from "@chakra-ui/react"
+import { Text, useColorMode } from "@chakra-ui/react"
 
 const COLORS = [
   "#0088FE",
@@ -26,7 +26,7 @@ const renderCustomizedLabel = ({
   value,
   payload,
   labelType,
-  fill
+  fill,
 }: // index,
 any) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5
@@ -70,8 +70,10 @@ const Chart = ({
   labelType: "value" | "percentage" | "symbol"
 }) => {
   const data = assets.filter((a) => a.balance !== 0)
-  const {colorMode} = useColorMode()
-  const fill = colorMode === 'light' ? 'black' : 'white'
+  if(!data.length) return <Text mt={20}>Empty</Text>
+
+  const { colorMode } = useColorMode()
+  const fill = colorMode === "light" ? "black" : "white"
 
   return (
     <ResponsiveContainer
@@ -86,7 +88,9 @@ const Chart = ({
           cx="50%"
           cy="50%"
           labelLine={false}
-          label={(props) => renderCustomizedLabel({ ...props, labelType, fill })}
+          label={(props) =>
+            renderCustomizedLabel({ ...props, labelType, fill })
+          }
           outerRadius={80}
           fill="#8884d8"
           dataKey="usdValue"

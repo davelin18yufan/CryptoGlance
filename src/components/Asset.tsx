@@ -11,14 +11,16 @@ import {
   RadioGroup,
   Stack,
   useDisclosure,
+  CheckboxGroup,
+  Checkbox,
 } from "@chakra-ui/react"
 import { ChevronRightIcon } from "@chakra-ui/icons"
 import Chart from "./Chart"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import Transaction from "./Transaction"
 import { formatNumber } from "../utils"
 import { useBalanceStore } from "../stores"
-
+import { useAccount } from "wagmi"
 
 export const AssetCard = ({
   symbol,
@@ -91,13 +93,30 @@ export const AssetCard = ({
 }
 
 const Asset = () => {
+  const { assets, ethBalance } = useBalanceStore()
+  const { isConnected } = useAccount()
+  if (!isConnected) return null
+  const initialSelectedAssets = useMemo(
+    () =>
+      assets
+        .filter((asset) => asset.balance !== 0 || asset.symbol === "ETH")
+        .map((asset) => asset.symbol),
+    [assets]
+  )
+
   const [labelType, setLabelType] = useState<"value" | "percentage" | "symbol">(
     "percentage"
   )
-  const { assets, ethBalance } = useBalanceStore()
+  const [selectedAssets, setSelectedAssets] = useState<string[]>(
+    initialSelectedAssets
+  )
 
   const border = useColorModeValue("1px", "2px")
   if (!assets) return null
+
+  const filteredAssets = assets.filter((asset) =>
+    selectedAssets.includes(asset.symbol)
+  )
 
   return (
     <Box>
@@ -110,9 +129,28 @@ const Asset = () => {
         w="90vw"
       >
         <VStack w="60%" alignItems="stretch" spacing={3} flexShrink={0}>
-          {assets.map((asset, index) =>
-            asset.balance ? <AssetCard key={index} {...asset} /> : null
-          )}
+          <CheckboxGroup
+            colorScheme="green"
+            defaultValue={selectedAssets}
+            onChange={(values) => setSelectedAssets(values as string[])}
+          >
+            <Stack
+              spacing={[1, 5]}
+              direction={["column", "row"]}
+              overflowX="auto"
+              bg="gray.800"
+              py={1}
+            >
+              {assets.map((asset) => (
+                <Checkbox key={asset.symbol} value={asset.symbol}>
+                  {asset.symbol}
+                </Checkbox>
+              ))}
+            </Stack>
+          </CheckboxGroup>
+          {filteredAssets.map((asset) => (
+            <AssetCard key={asset.symbol} {...asset} />
+          ))}
         </VStack>
         <Box
           w="50%"
