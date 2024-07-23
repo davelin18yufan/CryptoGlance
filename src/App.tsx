@@ -16,7 +16,7 @@ import { useAccount } from "wagmi"
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode()
-  const { address } = useAccount()
+  const { isConnected } = useAccount()
 
   return (
     <Box textAlign="center" fontSize="xl" p={3} width="100%">
@@ -33,7 +33,7 @@ function App() {
           </ButtonGroup>
         </Flex>
         <Divider />
-        {address ? (
+        {isConnected ? (
           <Asset />
         ) : (
           <h1 color="gray.100" >

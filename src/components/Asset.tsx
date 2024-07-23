@@ -16,30 +16,31 @@ import {
 } from "@chakra-ui/react"
 import { ChevronRightIcon } from "@chakra-ui/icons"
 import Chart from "./Chart"
-import { useState, useMemo } from "react"
+import { useState, useMemo, Dispatch, SetStateAction } from "react"
 import Transaction from "./Transaction"
 import { formatNumber } from "../utils"
-import { useBalanceStore } from "../stores"
+import { useBalanceStore, Asset as AssetType } from "../stores"
 import { useAccount } from "wagmi"
 
-export const AssetCard = ({
+const AssetCard = ({
   symbol,
   icon,
   address,
-  usdValue,
   balance,
+  usdValue,
   percentage,
 }: {
   symbol: string
   icon: string
   address: string
-  balance: number | string
+  balance: number
   usdValue: number
   percentage: number
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const bg = useColorModeValue("gray.50", "gray.700")
   const border = useColorModeValue("1px", "2px")
+
   return (
     <Box
       onClick={onOpen}
@@ -53,9 +54,7 @@ export const AssetCard = ({
       position="relative"
       cursor="pointer"
       role="group"
-      _hover={{
-        bg,
-      }}
+      _hover={{ bg }}
     >
       <HStack gap="12px">
         <Image
@@ -81,9 +80,7 @@ export const AssetCard = ({
           top="40%"
           _groupHover={{
             transform: "translateX(8px)",
-            transition: "transform",
-            transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-            transitionDuration: "150ms",
+            transition: "transform 150ms cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         />
       </HStack>
@@ -92,10 +89,45 @@ export const AssetCard = ({
   )
 }
 
+const AssetSelector = ({
+  assets,
+  selectedAssets,
+  setSelectedAssets,
+}: {
+  assets: AssetType[]
+  selectedAssets: string[]
+  setSelectedAssets: Dispatch<SetStateAction<string[]>>
+}) => {
+  const checkBoxBg = useColorModeValue("gray.100", "gray.800")
+
+  return (
+    <CheckboxGroup
+      colorScheme="green"
+      value={selectedAssets}
+      onChange={(values) => setSelectedAssets(values as string[])}
+    >
+      <Stack
+        spacing={[1, 5]}
+        direction={["column", "row"]}
+        overflowX="auto"
+        bg={checkBoxBg}
+        p={1}
+        rounded="lg"
+      >
+        {assets.map((asset) => (
+          <Checkbox key={asset.symbol} value={asset.symbol}>
+            {asset.symbol}
+          </Checkbox>
+        ))}
+      </Stack>
+    </CheckboxGroup>
+  )
+}
+
 const Asset = () => {
   const { assets, ethBalance } = useBalanceStore()
   const { isConnected } = useAccount()
-  if (!isConnected) return null
+  const border = useColorModeValue("1px", "2px")
   const initialSelectedAssets = useMemo(
     () =>
       assets
@@ -107,12 +139,11 @@ const Asset = () => {
   const [labelType, setLabelType] = useState<"value" | "percentage" | "symbol">(
     "percentage"
   )
-  const [selectedAssets, setSelectedAssets] = useState<string[]>(
-    initialSelectedAssets
+  const [selectedAssets, setSelectedAssets] = useState(
+    () => initialSelectedAssets
   )
 
-  const border = useColorModeValue("1px", "2px")
-  if (!assets) return null
+  if (!isConnected || !assets) return null
 
   const filteredAssets = assets.filter((asset) =>
     selectedAssets.includes(asset.symbol)
@@ -129,25 +160,11 @@ const Asset = () => {
         w="90vw"
       >
         <VStack w="60%" alignItems="stretch" spacing={3} flexShrink={0}>
-          <CheckboxGroup
-            colorScheme="green"
-            defaultValue={selectedAssets}
-            onChange={(values) => setSelectedAssets(values as string[])}
-          >
-            <Stack
-              spacing={[1, 5]}
-              direction={["column", "row"]}
-              overflowX="auto"
-              bg="gray.800"
-              py={1}
-            >
-              {assets.map((asset) => (
-                <Checkbox key={asset.symbol} value={asset.symbol}>
-                  {asset.symbol}
-                </Checkbox>
-              ))}
-            </Stack>
-          </CheckboxGroup>
+          <AssetSelector
+            assets={assets}
+            selectedAssets={selectedAssets}
+            setSelectedAssets={setSelectedAssets}
+          />
           {filteredAssets.map((asset) => (
             <AssetCard key={asset.symbol} {...asset} />
           ))}
@@ -162,8 +179,9 @@ const Asset = () => {
           position="relative"
         >
           <RadioGroup
-            // @ts-ignore
-            onChange={setLabelType}
+            onChange={(value) =>
+              setLabelType(value as "value" | "percentage" | "symbol")
+            }
             value={labelType}
             position="absolute"
             top={0}
