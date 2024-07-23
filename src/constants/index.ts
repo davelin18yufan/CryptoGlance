@@ -65,8 +65,23 @@ export const ERC20_TOKENS = [
   {
     name: "Ethereum",
     symbol: "ETH",
-    icon: 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+    icon: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
     priceKey: "ethereum",
     address: "0x5e21d1ee5cf0077b314c381720273ae82378d613",
   },
 ]
+
+export const dummyBalances: { result: number; status: "success" | "failed" }[] = [
+  { result: 2.10004, status: "success" },
+  { result: 0, status: "success" },
+  { result: 183.2, status: "success" },
+  { result: 0, status: "success" },
+  { result: 0, status: "success" },
+  { result: 0, status: "success" },
+  { result: 0, status: "success" },
+  { result: 0, status: "success" },
+  { result: 0, status: "success" },
+  { result: 100, status: "success" },
+]
+
+export type TokenBalance = typeof dummyBalances

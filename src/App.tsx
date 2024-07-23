@@ -12,9 +12,11 @@ import {
 import { MoonIcon, SunIcon } from "@chakra-ui/icons"
 import { WalletConnectButton } from "./components/WalletBtn"
 import Asset from "./components/Asset"
+import { useAccount } from "wagmi"
 
 function App() {
   const { colorMode, toggleColorMode } = useColorMode()
+  const { address } = useAccount()
 
   return (
     <Box textAlign="center" fontSize="xl" p={3} width="100%">
@@ -31,7 +33,13 @@ function App() {
           </ButtonGroup>
         </Flex>
         <Divider />
-        <Asset />
+        {address ? (
+          <Asset />
+        ) : (
+          <h1 color="gray.100" >
+            Connect wallet to display
+          </h1>
+        )}
       </VStack>
     </Box>
   )
